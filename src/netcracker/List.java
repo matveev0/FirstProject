@@ -9,6 +9,29 @@ public class List {
     private Person[] listOfPerson;
     private int length;
 
+    enum Sorttype {bubble, quick, shell}
+
+    enum Typefield {id, surname, age}
+
+    public static final Comparator<Person> COMPARE_BY_ID = new Comparator<Person>() {
+        @Override
+        public int compare(Person lhs, Person rhs) {
+            return lhs.getId() - rhs.getId();
+        }
+    };
+    public static final Comparator<Person> COMPARE_BY_SURNAME = new Comparator<Person>() {
+        @Override
+        public int compare(Person lhs, Person rhs) {
+            return lhs.getSurname().compareTo(rhs.getSurname());
+        }
+    };
+    public static final Comparator<Person> COMPARE_BY_AGE = new Comparator<Person>() {
+        @Override
+        public int compare(Person lhs, Person rhs) {
+            return lhs.getAge() - rhs.getAge();
+        }
+    };
+
     /**
      * @param capacity размер списка
      */
@@ -77,56 +100,110 @@ public class List {
                 System.out.println("ID: " + p.getId() + " SURNAME: " + p.getSurname() + " AGE: " + p.getAge());
     }
 
-    public void search() {
-
+    public Person search(String surname) {
+        for (Person p : listOfPerson) {
+            if (p.getSurname().equals(surname))
+                return p;
+        }
+        return null;
     }
 
-    public static final Comparator<Person> COMPARE_BY_ID = new Comparator<Person>() {
-        @Override
-        public int compare(Person lhs, Person rhs) {
-            return lhs.getId() - rhs.getId();
-        }
-    };
-
-    public static final Comparator<Person> COMPARE_BY_SURNAME = new Comparator<Person>() {
-        @Override
-        public int compare(Person lhs, Person rhs) {
-            return lhs.getSurname().compareTo(rhs.getSurname());
-        }
-    };
-
-    public static final Comparator<Person> COMPARE_BY_AGE = new Comparator<Person>() {
-        @Override
-        public int compare(Person lhs, Person rhs) {
-            return lhs.getAge() - rhs.getAge();
-        }
-    };
-
-    void bubbleSort(int field, Comparator<Person> comparator) {
-        int n = listOfPerson.length;
+    public void bubbleSort(Comparator<Person> comparator) {
+        int n = id + 1;
         Person temp;
-        for(int i=0; i < n; i++){
-            for(int j=1; j < (n-i); j++){
-                if(comparator.compare(listOfPerson[j-1], listOfPerson[j])>0){
+        for (int i = 0; i < n; i++) {
+            for (int j = 1; j < (n - i); j++) {
+                if (comparator.compare(listOfPerson[j - 1], listOfPerson[j]) > 0) {
                     //swap elements
-                    temp = listOfPerson[j-1];
-                    listOfPerson[j-1] = listOfPerson[j];
+                    temp = listOfPerson[j - 1];
+                    listOfPerson[j - 1] = listOfPerson[j];
                     listOfPerson[j] = temp;
                 }
             }
         }
     }
 
-    public void sort(int field) {
-        switch (field) {
-            case 1:
-                Arrays.sort(listOfPerson, COMPARE_BY_AGE);
+    public void quickSort(Comparator<Person> comparator) {
+        int startIndex = 0;
+        int endIndex = id;
+        doSort(startIndex, endIndex, comparator);
+    }
+
+    private void doSort(int start, int end, Comparator<Person> comparator) {
+        if (start >= end)
+            return;
+        int i = start, j = end;
+        int cur = i - (i - j) / 2;
+        while (i < j) {
+            while (i < cur && comparator.compare(listOfPerson[i], listOfPerson[cur]) <= 0) {
+                i++;
+            }
+            while (j > cur && comparator.compare(listOfPerson[cur], listOfPerson[j]) <= 0) {
+                j--;
+            }
+            if (i < j) {
+                Person temp = listOfPerson[i];
+                listOfPerson[i] = listOfPerson[j];
+                listOfPerson[j] = temp;
+                if (i == cur)
+                    cur = j;
+                else if (j == cur)
+                    cur = i;
+            }
+        }
+        doSort(start, cur, comparator);
+        doSort(cur + 1, end, comparator);
+    }
+
+    public void shell(Comparator<Person> comparator) {
+        int l = id + 1;
+        int increment = l / 2;
+        while (increment > 0) {
+            for (int i = increment; i < l; i++) {
+                int j = i;
+                Person temp = listOfPerson[i];
+                while (j >= increment && comparator.compare(listOfPerson[j - increment], temp) > 0) {
+                    listOfPerson[j] = listOfPerson[j - increment];
+                    j = j - increment;
+                }
+                listOfPerson[j] = temp;
+            }
+            if (increment == 2) {
+                increment = 1;
+            } else {
+                increment *= (5.0 / 11);
+            }
+        }
+    }
+
+    public void sort(Typefield field, Sorttype typesort) {
+        switch (field.toString() + "." + typesort.toString()) {
+            case "age.bubble":
+                bubbleSort(COMPARE_BY_AGE);
                 break;
-            case 2:
-                Arrays.sort(listOfPerson, COMPARE_BY_SURNAME);
+            case "age.quick":
+                quickSort(COMPARE_BY_AGE);
                 break;
-            case 3:
-                Arrays.sort(listOfPerson, COMPARE_BY_ID);
+            case "age.shell":
+                shell(COMPARE_BY_AGE);
+                break;
+            case "surname.bubble":
+                bubbleSort(COMPARE_BY_SURNAME);
+                break;
+            case "surname.quick":
+                quickSort(COMPARE_BY_SURNAME);
+                break;
+            case "surname.shell":
+                shell(COMPARE_BY_SURNAME);
+                break;
+            case "id.bubble":
+                bubbleSort(COMPARE_BY_ID);
+                break;
+            case "id.quick":
+                quickSort(COMPARE_BY_ID);
+                break;
+            case "id.shell":
+                shell(COMPARE_BY_ID);
                 break;
         }
     }
