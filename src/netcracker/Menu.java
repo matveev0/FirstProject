@@ -5,14 +5,35 @@ import java.util.Scanner;
 
 public class Menu {
 
-    private List ListOfPerson = new List(5);
+    private List listOfPerson = new List(5);
 
+    /**
+     * Метод для вывода меню в консоль для работы со списком
+     * @throws MyException
+     */
     public void ShowMenu() throws MyException {
         int Case = 0;
+        Person p1 = new Person(1,"Матвеев1", new LocalDate(1999,10,11));
+        Person p2 = new Person(2,"Матвеев2", new LocalDate(1990,1,25));
+        Person p3 =  new Person(3,"Матвеев4", new LocalDate(1977,3,8));
+        Person p4 = new Person(4,"Матвеев5", new LocalDate(1917,1,1));
+        Person p5 = new Person(5,"Матвеев6", new LocalDate(1927,5,15));
+        Person p6 = new Person(6,"Матвеев7", new LocalDate(1957,11,15));
+        Person p7 = new Person(7,"Матвеев3", new LocalDate(1931,1,15));
+
+        listOfPerson.add(p1);
+        listOfPerson.add(p2);
+        listOfPerson.add(p3);
+        listOfPerson.add(p4);
+        listOfPerson.add(p5);
+        listOfPerson.add(p6);
+
+
         while (Case != -1) {
             System.out.println("1 - Add person");
             System.out.println("2 - Delete person");
             System.out.println("3 - Printer");
+            System.out.println("4 - Sort");
 
             Scanner in = new Scanner(System.in);
             Case = in.nextInt();
@@ -31,7 +52,7 @@ public class Menu {
                         p = new Person(Integer.parseInt(id), surname, new LocalDate(Integer.parseInt(DateOfBirth[0]),
                                 Integer.parseInt(DateOfBirth[1]),
                                 Integer.parseInt(DateOfBirth[2])));
-                        ListOfPerson.add(p);
+                        listOfPerson.add(p);
 
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
@@ -43,7 +64,7 @@ public class Menu {
                         System.out.print("ID: ");
                         in.nextLine();
                         String id = in.nextLine();
-                        ListOfPerson.delete(Integer.parseInt(id));
+                        listOfPerson.delete(Integer.parseInt(id));
                     }
                     catch (Exception ex){
                         System.out.println(ex.getMessage());
@@ -51,7 +72,10 @@ public class Menu {
                     break;
                 }
                 case 3: {
-                    ListOfPerson.printer();
+                    listOfPerson.printer(); break;
+                }
+                case 4:{
+                    listOfPerson.sort(1);  break;
                 }
             }
         }

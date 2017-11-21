@@ -25,6 +25,10 @@ public class Person {
         return id;
     }
 
+    /**
+     * Возвращает возраст персоны с помощью указанного дня рождения
+     * @return
+     */
     public int getAge() {
         int age = LocalDate.now().getYear() - DateOfBirth.getYear();
         if (LocalDate.now().getDayOfYear() <= DateOfBirth.getDayOfYear())
